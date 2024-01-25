@@ -1,6 +1,7 @@
--- name: CreateTransfer :exec
+-- name: CreateTransfer :one
 INSERT INTO transfers (from_account_id, to_account_id, amount, created_at) 
-VALUES ($1, $2, $3, NOW());
+VALUES ($1, $2, $3, NOW())
+RETURNING id, from_account_id, to_account_id, amount, created_at;
 
 -- name: GetTransfer :one
 SELECT * FROM transfers WHERE id = $1;
