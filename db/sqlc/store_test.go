@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -15,8 +14,7 @@ func TestTransferTx(t *testing.T) {
 	// Create test accounts
 	fromAccount := createRandomAccount(t)
 	toAccount := createRandomAccount(t)
-	fmt.Println("fromAccount (before): ", fromAccount.Balance)
-	fmt.Println("toAccount (before): ", toAccount.Balance)
+
 
 	// Run n concurrent transfer transactions
 	n := 5
@@ -26,11 +24,8 @@ func TestTransferTx(t *testing.T) {
 	results := make(chan TransferTxResult)
 
 	for i := 0; i < n; i++ {
-		// Run the transfer within a goroutine
-		txName := fmt.Sprintf("tx %d", i+1)
 		go func() {
-			ctx := context.WithValue(context.Background(), txKey, txName)
-			result, err := store.TransferTx(ctx, TransferTxParams{
+			result, err := store.TransferTx(context.Background(), TransferTxParams{
 				FromAccountID: fromAccount.ID,
 				ToAccountID:   toAccount.ID,
 				Amount:        amount,
@@ -99,8 +94,6 @@ func TestTransferTx(t *testing.T) {
 		require.Equal(t, account2.ID, toAccount.ID)
 
 		// check account balances
-		fmt.Println("fromAccount (tx): ", account1.Balance)
-		fmt.Println("toAccount (tx): ", account2.Balance)
 		diff1 := fromAccount.Balance - account1.Balance
 		diff2 := account2.Balance - toAccount.Balance
 		require.Equal(t, diff1, diff2)
@@ -122,9 +115,6 @@ func TestTransferTx(t *testing.T) {
 	updatedAccount2, err := testQueries.GetAccount(context.Background(), toAccount.ID)
 	require.NoError(t, err)
 	require.NotEmpty(t, updatedAccount2)
-
-	fmt.Println("fromAccount (after): ", fromAccount.Balance)
-	fmt.Println("toAccount (after): ", toAccount.Balance)
 
 	require.Equal(t, fromAccount.Balance-int64(n)*amount, updatedAccount1.Balance)
 	require.Equal(t, toAccount.Balance+int64(n)*amount, updatedAccount2.Balance)
