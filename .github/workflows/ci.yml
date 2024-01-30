@@ -31,14 +31,6 @@ jobs:
         with:
           go-version: "1.x"
 
-      - name: Set up PostgreSQL
-        run: |
-          sudo apt-get update
-          sudo apt-get install postgresql-client -y
-
-      - name: Build
-        run: go build -v ./...
-
       - name: Install golang-migrate
         run: |
           curl -L https://github.com/golang-migrate/migrate/releases/download/$version/migrate.$os-$arch.tar.gz | tar xvz
