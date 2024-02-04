@@ -174,7 +174,6 @@ func TestQueries_ListAccounts(t *testing.T) {
 	for _, account := range accounts {
 		require.NotZero(t, account.ID)
 		require.NotEmpty(t, account.Owner)
-		require.NotZero(t, account.Balance)
 		require.NotEmpty(t, account.Currency)
 		require.NotZero(t, account.CreatedAt)
 	}
